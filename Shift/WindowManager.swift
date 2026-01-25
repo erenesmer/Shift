@@ -155,7 +155,7 @@ class WindowManager {
     
     func decreaseSize() {
         print("DECREASING SIZE...")
-        guard let (window, screen) = getWindowAndScreen() else { return }
+        guard let (window, _) = getWindowAndScreen() else { return }
         
         guard let currentSize = getWindowSize(window) else {
             print("ERROR: Could not get window size")
@@ -242,6 +242,54 @@ class WindowManager {
         let y = menuBarHeight + frame.height / 2
         let width = frame.width / 2
         let height = frame.height / 2
+        
+        setWindowFrame(window, x: x, y: y, width: width, height: height)
+        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+    }
+    
+    func tileLeftThird() {
+        print("Tiling LEFT THIRD...")
+        guard let (window, screen) = getWindowAndScreen() else { return }
+        
+        let frame = screen.visibleFrame
+        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
+        
+        let x = frame.origin.x
+        let y = menuBarHeight
+        let width = frame.width / 3
+        let height = frame.height
+        
+        setWindowFrame(window, x: x, y: y, width: width, height: height)
+        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+    }
+    
+    func tileCenterThird() {
+        print("Tiling CENTER THIRD...")
+        guard let (window, screen) = getWindowAndScreen() else { return }
+        
+        let frame = screen.visibleFrame
+        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
+        
+        let x = frame.origin.x + frame.width / 3
+        let y = menuBarHeight
+        let width = frame.width / 3
+        let height = frame.height
+        
+        setWindowFrame(window, x: x, y: y, width: width, height: height)
+        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+    }
+    
+    func tileRightThird() {
+        print("Tiling RIGHT THIRD...")
+        guard let (window, screen) = getWindowAndScreen() else { return }
+        
+        let frame = screen.visibleFrame
+        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
+        
+        let x = frame.origin.x + (frame.width / 3) * 2
+        let y = menuBarHeight
+        let width = frame.width / 3
+        let height = frame.height
         
         setWindowFrame(window, x: x, y: y, width: width, height: height)
         print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")

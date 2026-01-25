@@ -154,6 +154,12 @@ struct ShortcutsSettingsView: View {
                     
                     ShortcutRow(action: "Increase Size", shortcut: "⌘ ⌥ ⇧ +")
                     ShortcutRow(action: "Decrease Size", shortcut: "⌘ ⌥ ⇧ -")
+                    
+                    Divider()
+                    
+                    ShortcutRow(action: "Left Third", shortcut: "⌘ ⌥ ⇧ 5")
+                    ShortcutRow(action: "Center Third", shortcut: "⌘ ⌥ ⇧ 6")
+                    ShortcutRow(action: "Right Third", shortcut: "⌘ ⌥ ⇧ 7")
                 }
             }
             
