@@ -127,39 +127,39 @@ struct ShortcutsSettingsView: View {
             Text("Keyboard Shortcuts")
                 .font(.headline)
             
-            Text("All shortcuts use ⌘ ⌥ ⇧ (Cmd + Option + Shift)")
+            Text("All shortcuts use ⌘ ⌥ ⌃ (Cmd + Option + Control)")
                 .font(.caption)
                 .foregroundColor(.secondary)
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    ShortcutRow(action: "Left Half", shortcut: "⌘ ⌥ ⇧ ←")
-                    ShortcutRow(action: "Right Half", shortcut: "⌘ ⌥ ⇧ →")
-                    ShortcutRow(action: "Top Half", shortcut: "⌘ ⌥ ⇧ ↑")
-                    ShortcutRow(action: "Bottom Half", shortcut: "⌘ ⌥ ⇧ ↓")
+                    ShortcutRow(action: "Left Half", shortcut: "⌘ ⌥ ⌃ ←")
+                    ShortcutRow(action: "Right Half", shortcut: "⌘ ⌥ ⌃ →")
+                    ShortcutRow(action: "Top Half", shortcut: "⌘ ⌥ ⌃ ↑")
+                    ShortcutRow(action: "Bottom Half", shortcut: "⌘ ⌥ ⌃ ↓")
                     
                     Divider()
                     
-                    ShortcutRow(action: "Top Left", shortcut: "⌘ ⌥ ⇧ 1")
-                    ShortcutRow(action: "Top Right", shortcut: "⌘ ⌥ ⇧ 2")
-                    ShortcutRow(action: "Bottom Left", shortcut: "⌘ ⌥ ⇧ 3")
-                    ShortcutRow(action: "Bottom Right", shortcut: "⌘ ⌥ ⇧ 4")
+                    ShortcutRow(action: "Top Left", shortcut: "⌘ ⌥ ⌃ 1")
+                    ShortcutRow(action: "Top Right", shortcut: "⌘ ⌥ ⌃ 2")
+                    ShortcutRow(action: "Bottom Left", shortcut: "⌘ ⌥ ⌃ 3")
+                    ShortcutRow(action: "Bottom Right", shortcut: "⌘ ⌥ ⌃ 4")
                     
                     Divider()
                     
-                    ShortcutRow(action: "Maximize", shortcut: "⌘ ⌥ ⇧ M")
-                    ShortcutRow(action: "Center", shortcut: "⌘ ⌥ ⇧ C")
+                    ShortcutRow(action: "Maximize", shortcut: "⌘ ⌥ ⌃ M")
+                    ShortcutRow(action: "Center", shortcut: "⌘ ⌥ ⌃ C")
                     
                     Divider()
                     
-                    ShortcutRow(action: "Increase Size", shortcut: "⌘ ⌥ ⇧ +")
-                    ShortcutRow(action: "Decrease Size", shortcut: "⌘ ⌥ ⇧ -")
+                    ShortcutRow(action: "Increase Size", shortcut: "⌘ ⌥ ⌃ +")
+                    ShortcutRow(action: "Decrease Size", shortcut: "⌘ ⌥ ⌃ -")
                     
                     Divider()
                     
-                    ShortcutRow(action: "Left Third", shortcut: "⌘ ⌥ ⇧ 5")
-                    ShortcutRow(action: "Center Third", shortcut: "⌘ ⌥ ⇧ 6")
-                    ShortcutRow(action: "Right Third", shortcut: "⌘ ⌥ ⇧ 7")
+                    ShortcutRow(action: "Left Third", shortcut: "⌘ ⌥ ⌃ 5")
+                    ShortcutRow(action: "Center Third", shortcut: "⌘ ⌥ ⌃ 6")
+                    ShortcutRow(action: "Right Third", shortcut: "⌘ ⌥ ⌃ 7")
                 }
             }
             

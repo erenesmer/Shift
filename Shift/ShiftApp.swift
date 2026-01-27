@@ -49,21 +49,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             print("WARNING: Accessibility permissions not granted!")
             
-            // Show alert
-            DispatchQueue.main.async {
-                let alert = NSAlert()
-                alert.messageText = "Accessibility Permission Required"
-                alert.informativeText = "Shift needs Accessibility permissions to move and resize windows.\n\n1. Open System Settings\n2. Go to Privacy & Security → Accessibility\n3. Enable Shift in the list\n\nYou may need to quit and relaunch Shift after granting permission."
-                alert.alertStyle = .warning
-                alert.addButton(withTitle: "Open System Settings")
-                alert.addButton(withTitle: "Later")
-                
-                if alert.runModal() == .alertFirstButtonReturn {
-                    // Open Accessibility settings
-                    if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-                        NSWorkspace.shared.open(url)
-                    }
-                }
+            // Show alert after a short delay to avoid blocking app launch
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.showAccessibilityAlert()
+            }
+        }
+    }
+    
+    private func showAccessibilityAlert() {
+        let alert = NSAlert()
+        alert.messageText = "Accessibility Permission Required"
+        alert.informativeText = "Shift needs Accessibility permissions to move and resize windows.\n\n1. Open System Settings\n2. Go to Privacy & Security → Accessibility\n3. Enable Shift in the list\n\nYou may need to quit and relaunch Shift after granting permission."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Later")
+        
+        if alert.runModal() == .alertFirstButtonReturn {
+            // Open Accessibility settings
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                NSWorkspace.shared.open(url)
             }
         }
     }
@@ -78,71 +82,71 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         
         // Window positioning actions
-        let leftItem = NSMenuItem(title: "Left Half (⌘⌥⇧←)", action: #selector(tileLeft), keyEquivalent: "")
+        let leftItem = NSMenuItem(title: "Left Half (⌘⌥⌃←)", action: #selector(tileLeft), keyEquivalent: "")
         leftItem.target = self
         menu.addItem(leftItem)
         
-        let rightItem = NSMenuItem(title: "Right Half (⌘⌥⇧→)", action: #selector(tileRight), keyEquivalent: "")
+        let rightItem = NSMenuItem(title: "Right Half (⌘⌥⌃→)", action: #selector(tileRight), keyEquivalent: "")
         rightItem.target = self
         menu.addItem(rightItem)
         
-        let topItem = NSMenuItem(title: "Top Half (⌘⌥⇧↑)", action: #selector(tileTop), keyEquivalent: "")
+        let topItem = NSMenuItem(title: "Top Half (⌘⌥⌃↑)", action: #selector(tileTop), keyEquivalent: "")
         topItem.target = self
         menu.addItem(topItem)
         
-        let bottomItem = NSMenuItem(title: "Bottom Half (⌘⌥⇧↓)", action: #selector(tileBottom), keyEquivalent: "")
+        let bottomItem = NSMenuItem(title: "Bottom Half (⌘⌥⌃↓)", action: #selector(tileBottom), keyEquivalent: "")
         bottomItem.target = self
         menu.addItem(bottomItem)
         
         menu.addItem(NSMenuItem.separator())
         
-        let maximizeItem = NSMenuItem(title: "Maximize (⌘⌥⇧M)", action: #selector(maximize), keyEquivalent: "")
+        let maximizeItem = NSMenuItem(title: "Maximize (⌘⌥⌃M)", action: #selector(maximize), keyEquivalent: "")
         maximizeItem.target = self
         menu.addItem(maximizeItem)
         
-        let centerItem = NSMenuItem(title: "Center (⌘⌥⇧C)", action: #selector(center), keyEquivalent: "")
+        let centerItem = NSMenuItem(title: "Center (⌘⌥⌃C)", action: #selector(center), keyEquivalent: "")
         centerItem.target = self
         menu.addItem(centerItem)
         
         menu.addItem(NSMenuItem.separator())
         
-        let increaseSizeItem = NSMenuItem(title: "Increase Size (⌘⌥⇧+)", action: #selector(increaseSize), keyEquivalent: "")
+        let increaseSizeItem = NSMenuItem(title: "Increase Size (⌘⌥⌃+)", action: #selector(increaseSize), keyEquivalent: "")
         increaseSizeItem.target = self
         menu.addItem(increaseSizeItem)
         
-        let decreaseSizeItem = NSMenuItem(title: "Decrease Size (⌘⌥⇧-)", action: #selector(decreaseSize), keyEquivalent: "")
+        let decreaseSizeItem = NSMenuItem(title: "Decrease Size (⌘⌥⌃-)", action: #selector(decreaseSize), keyEquivalent: "")
         decreaseSizeItem.target = self
         menu.addItem(decreaseSizeItem)
         
         menu.addItem(NSMenuItem.separator())
         
-        let topLeftItem = NSMenuItem(title: "Top Left (⌘⌥⇧1)", action: #selector(tileTopLeft), keyEquivalent: "")
+        let topLeftItem = NSMenuItem(title: "Top Left (⌘⌥⌃1)", action: #selector(tileTopLeft), keyEquivalent: "")
         topLeftItem.target = self
         menu.addItem(topLeftItem)
         
-        let topRightItem = NSMenuItem(title: "Top Right (⌘⌥⇧2)", action: #selector(tileTopRight), keyEquivalent: "")
+        let topRightItem = NSMenuItem(title: "Top Right (⌘⌥⌃2)", action: #selector(tileTopRight), keyEquivalent: "")
         topRightItem.target = self
         menu.addItem(topRightItem)
         
-        let bottomLeftItem = NSMenuItem(title: "Bottom Left (⌘⌥⇧3)", action: #selector(tileBottomLeft), keyEquivalent: "")
+        let bottomLeftItem = NSMenuItem(title: "Bottom Left (⌘⌥⌃3)", action: #selector(tileBottomLeft), keyEquivalent: "")
         bottomLeftItem.target = self
         menu.addItem(bottomLeftItem)
         
-        let bottomRightItem = NSMenuItem(title: "Bottom Right (⌘⌥⇧4)", action: #selector(tileBottomRight), keyEquivalent: "")
+        let bottomRightItem = NSMenuItem(title: "Bottom Right (⌘⌥⌃4)", action: #selector(tileBottomRight), keyEquivalent: "")
         bottomRightItem.target = self
         menu.addItem(bottomRightItem)
         
         menu.addItem(NSMenuItem.separator())
         
-        let leftThirdItem = NSMenuItem(title: "Left Third (⌘⌥⇧5)", action: #selector(tileLeftThird), keyEquivalent: "")
+        let leftThirdItem = NSMenuItem(title: "Left Third (⌘⌥⌃5)", action: #selector(tileLeftThird), keyEquivalent: "")
         leftThirdItem.target = self
         menu.addItem(leftThirdItem)
         
-        let centerThirdItem = NSMenuItem(title: "Center Third (⌘⌥⇧6)", action: #selector(tileCenterThird), keyEquivalent: "")
+        let centerThirdItem = NSMenuItem(title: "Center Third (⌘⌥⌃6)", action: #selector(tileCenterThird), keyEquivalent: "")
         centerThirdItem.target = self
         menu.addItem(centerThirdItem)
         
-        let rightThirdItem = NSMenuItem(title: "Right Third (⌘⌥⇧7)", action: #selector(tileRightThird), keyEquivalent: "")
+        let rightThirdItem = NSMenuItem(title: "Right Third (⌘⌥⌃7)", action: #selector(tileRightThird), keyEquivalent: "")
         rightThirdItem.target = self
         menu.addItem(rightThirdItem)
         
@@ -190,8 +194,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             nil
         )
         
-        // Cmd + Option + Shift modifiers
-        let modifiers: UInt32 = UInt32(cmdKey | optionKey | shiftKey)
+        // Cmd + Option + Control modifiers
+        let modifiers: UInt32 = UInt32(cmdKey | optionKey | controlKey)
         
         // Register: Cmd + Option + Shift + Left Arrow
         let hotKeyID1 = EventHotKeyID(signature: OSType(0x5348), id: 1)

@@ -10,9 +10,22 @@
 		6A8D7CF22F25A76E00B609D7 /* Shift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6A8D7CF52F25A76E00B609D8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6A8D7CF12F25A76E00B609D7 /* Shift */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6A8D7CF42F25A76E00B609D7 /* Shift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6A8D7CF52F25A76E00B609D8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+			);
 			path = Shift;
 			sourceTree = "<group>";
 		};
