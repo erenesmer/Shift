@@ -16,294 +16,227 @@ class WindowManager {
     // MARK: - Public Methods
     
     func tileLeft() {
-        print("Tiling LEFT...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        // Left half: x=0, y=menuBar, width=half, height=full
-        let x = frame.origin.x
-        let y = menuBarHeight
-        let width = frame.width / 2
-        let height = frame.height
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY, width: f.width / 2, height: f.height)
     }
     
     func tileRight() {
-        print("Tiling RIGHT...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        // Right half: x=half, y=menuBar, width=half, height=full
-        let x = frame.origin.x + frame.width / 2
-        let y = menuBarHeight
-        let width = frame.width / 2
-        let height = frame.height
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX + f.width / 2, y: f.minY, width: f.width / 2, height: f.height)
     }
     
     func tileTop() {
-        print("Tiling TOP...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        // Top half: x=0, y=menuBar, width=full, height=half
-        let x = frame.origin.x
-        let y = menuBarHeight
-        let width = frame.width
-        let height = frame.height / 2
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY, width: f.width, height: f.height / 2)
     }
     
     func tileBottom() {
-        print("Tiling BOTTOM...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        // Bottom half: x=0, y=menuBar+halfHeight, width=full, height=half
-        let x = frame.origin.x
-        let y = menuBarHeight + frame.height / 2
-        let width = frame.width
-        let height = frame.height / 2
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY + f.height / 2, width: f.width, height: f.height / 2)
     }
     
     func maximize() {
-        print("MAXIMIZING...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        // Full screen (visible area)
-        let x = frame.origin.x
-        let y = menuBarHeight
-        let width = frame.width
-        let height = frame.height
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY, width: f.width, height: f.height)
     }
     
     func center() {
-        print("CENTERING...")
         guard let (window, screen) = getWindowAndScreen() else { return }
+        guard let currentSize = getWindowSize(window) else { return }
         
-        // Get current window size
-        guard let currentSize = getWindowSize(window) else {
-            print("ERROR: Could not get window size")
-            return
-        }
+        let f = axVisibleFrame(for: screen)
+        let x = f.minX + (f.width - currentSize.width) / 2
+        let y = f.minY + (f.height - currentSize.height) / 2
         
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        // Keep current size, just center position
-        let x = frame.origin.x + (frame.width - currentSize.width) / 2
-        let y = menuBarHeight + (frame.height - currentSize.height) / 2
-        
-        // Only set position, not size
         setWindowPosition(window, x: x, y: y)
-        print("Centered to: x=\(x), y=\(y) (size unchanged: \(currentSize.width)x\(currentSize.height))")
     }
     
     func increaseSize() {
-        print("INCREASING SIZE...")
         guard let (window, screen) = getWindowAndScreen() else { return }
+        guard let currentSize = getWindowSize(window) else { return }
+        guard let currentPosition = getWindowPosition(window) else { return }
         
-        guard let currentSize = getWindowSize(window) else {
-            print("ERROR: Could not get window size")
-            return
-        }
+        let f = axVisibleFrame(for: screen)
         
-        guard let currentPosition = getWindowPosition(window) else {
-            print("ERROR: Could not get window position")
-            return
-        }
+        let factor: CGFloat = 1.1
+        let newWidth = min(currentSize.width * factor, f.width)
+        let newHeight = min(currentSize.height * factor, f.height)
         
-        let frame = screen.visibleFrame
-        
-        // Increase by 10%
-        let increaseAmount: CGFloat = 0.1
-        let newWidth = min(currentSize.width * (1 + increaseAmount), frame.width)
-        let newHeight = min(currentSize.height * (1 + increaseAmount), frame.height)
-        
-        // Adjust position to keep window centered during resize
         let deltaWidth = newWidth - currentSize.width
         let deltaHeight = newHeight - currentSize.height
-        let newX = max(frame.origin.x, currentPosition.x - deltaWidth / 2)
-        let newY = max(0, currentPosition.y - deltaHeight / 2)
+        let newX = max(f.minX, currentPosition.x - deltaWidth / 2)
+        let newY = max(f.minY, currentPosition.y - deltaHeight / 2)
         
         setWindowFrame(window, x: newX, y: newY, width: newWidth, height: newHeight)
-        print("Increased to: \(newWidth)x\(newHeight)")
     }
     
     func decreaseSize() {
-        print("DECREASING SIZE...")
         guard let (window, _) = getWindowAndScreen() else { return }
+        guard let currentSize = getWindowSize(window) else { return }
+        guard let currentPosition = getWindowPosition(window) else { return }
         
-        guard let currentSize = getWindowSize(window) else {
-            print("ERROR: Could not get window size")
-            return
-        }
-        
-        guard let currentPosition = getWindowPosition(window) else {
-            print("ERROR: Could not get window position")
-            return
-        }
-        
-        // Decrease by 10%, but keep minimum size
-        let decreaseAmount: CGFloat = 0.1
+        let factor: CGFloat = 0.9
         let minSize: CGFloat = 200
-        let newWidth = max(currentSize.width * (1 - decreaseAmount), minSize)
-        let newHeight = max(currentSize.height * (1 - decreaseAmount), minSize)
+        let newWidth = max(currentSize.width * factor, minSize)
+        let newHeight = max(currentSize.height * factor, minSize)
         
-        // Adjust position to keep window centered during resize
         let deltaWidth = currentSize.width - newWidth
         let deltaHeight = currentSize.height - newHeight
         let newX = currentPosition.x + deltaWidth / 2
         let newY = currentPosition.y + deltaHeight / 2
         
         setWindowFrame(window, x: newX, y: newY, width: newWidth, height: newHeight)
-        print("Decreased to: \(newWidth)x\(newHeight)")
     }
     
     func tileTopLeft() {
-        print("Tiling TOP LEFT...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x
-        let y = menuBarHeight
-        let width = frame.width / 2
-        let height = frame.height / 2
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY, width: f.width / 2, height: f.height / 2)
     }
     
     func tileTopRight() {
-        print("Tiling TOP RIGHT...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x + frame.width / 2
-        let y = menuBarHeight
-        let width = frame.width / 2
-        let height = frame.height / 2
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX + f.width / 2, y: f.minY, width: f.width / 2, height: f.height / 2)
     }
     
     func tileBottomLeft() {
-        print("Tiling BOTTOM LEFT...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x
-        let y = menuBarHeight + frame.height / 2
-        let width = frame.width / 2
-        let height = frame.height / 2
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY + f.height / 2, width: f.width / 2, height: f.height / 2)
     }
     
     func tileBottomRight() {
-        print("Tiling BOTTOM RIGHT...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x + frame.width / 2
-        let y = menuBarHeight + frame.height / 2
-        let width = frame.width / 2
-        let height = frame.height / 2
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX + f.width / 2, y: f.minY + f.height / 2, width: f.width / 2, height: f.height / 2)
     }
     
     func tileLeftThird() {
-        print("Tiling LEFT THIRD...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x
-        let y = menuBarHeight
-        let width = frame.width / 3
-        let height = frame.height
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX, y: f.minY, width: f.width / 3, height: f.height)
     }
     
     func tileCenterThird() {
-        print("Tiling CENTER THIRD...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x + frame.width / 3
-        let y = menuBarHeight
-        let width = frame.width / 3
-        let height = frame.height
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX + f.width / 3, y: f.minY, width: f.width / 3, height: f.height)
     }
     
     func tileRightThird() {
-        print("Tiling RIGHT THIRD...")
         guard let (window, screen) = getWindowAndScreen() else { return }
-        
-        let frame = screen.visibleFrame
-        let menuBarHeight = screen.frame.height - screen.visibleFrame.height - screen.visibleFrame.origin.y
-        
-        let x = frame.origin.x + (frame.width / 3) * 2
-        let y = menuBarHeight
-        let width = frame.width / 3
-        let height = frame.height
-        
-        setWindowFrame(window, x: x, y: y, width: width, height: height)
-        print("Set to: x=\(x), y=\(y), width=\(width), height=\(height)")
+        let f = axVisibleFrame(for: screen)
+        setWindowFrame(window, x: f.minX + (f.width / 3) * 2, y: f.minY, width: f.width / 3, height: f.height)
     }
     
-    // MARK: - Private Methods
+    func moveToNextDisplay() {
+        let screens = NSScreen.screens
+        guard screens.count > 1 else { return }
+        
+        guard let app = NSWorkspace.shared.frontmostApplication else { return }
+        let appElement = AXUIElementCreateApplication(app.processIdentifier)
+        
+        var windowRef: CFTypeRef?
+        let result = AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &windowRef)
+        guard result == .success, let windowValue = windowRef else { return }
+        let window = windowValue as! AXUIElement
+        
+        guard let position = getWindowPosition(window),
+              let size = getWindowSize(window) else { return }
+        
+        let currentScreen = screenForWindow(position: position, size: size)
+        guard let currentIndex = screens.firstIndex(of: currentScreen) else { return }
+        let nextScreen = screens[(currentIndex + 1) % screens.count]
+        
+        let currentVF = axVisibleFrame(for: currentScreen)
+        let nextVF = axVisibleFrame(for: nextScreen)
+        
+        // Map position proportionally from current screen to next screen
+        let relX = (position.x - currentVF.minX) / currentVF.width
+        let relY = (position.y - currentVF.minY) / currentVF.height
+        let relW = size.width / currentVF.width
+        let relH = size.height / currentVF.height
+        
+        let newX = nextVF.minX + relX * nextVF.width
+        let newY = nextVF.minY + relY * nextVF.height
+        let newW = relW * nextVF.width
+        let newH = relH * nextVF.height
+        
+        setWindowFrame(window, x: newX, y: newY, width: newW, height: newH)
+    }
+    
+    // MARK: - Coordinate Conversion
+    
+    /// Returns the screen's visible frame converted to Accessibility API coordinates
+    /// (origin at top-left of primary display, Y increases downward).
+    private func axVisibleFrame(for screen: NSScreen) -> CGRect {
+        guard let primaryScreen = NSScreen.screens.first else {
+            return screen.visibleFrame
+        }
+        let primaryHeight = primaryScreen.frame.height
+        let vf = screen.visibleFrame
+        return CGRect(
+            x: vf.origin.x,
+            y: primaryHeight - vf.origin.y - vf.height,
+            width: vf.width,
+            height: vf.height
+        )
+    }
+    
+    // MARK: - Screen Detection
+    
+    /// Finds which screen contains the center of the given window.
+    private func screenForWindow(position: CGPoint, size: CGSize) -> NSScreen {
+        guard let primaryScreen = NSScreen.screens.first else {
+            return NSScreen.main ?? NSScreen.screens[0]
+        }
+        let primaryHeight = primaryScreen.frame.height
+        
+        // Window center in AX coordinates
+        let centerX = position.x + size.width / 2
+        let centerYAX = position.y + size.height / 2
+        
+        // Convert to NSScreen coordinates (bottom-left origin, Y up)
+        let centerYNS = primaryHeight - centerYAX
+        let point = NSPoint(x: centerX, y: centerYNS)
+        
+        for screen in NSScreen.screens {
+            if screen.frame.contains(point) {
+                return screen
+            }
+        }
+        
+        // Fallback: find the closest screen by distance to center
+        var bestScreen = NSScreen.main ?? NSScreen.screens[0]
+        var bestDistance = CGFloat.greatestFiniteMagnitude
+        for screen in NSScreen.screens {
+            let screenCenter = NSPoint(
+                x: screen.frame.midX,
+                y: screen.frame.midY
+            )
+            let dx = point.x - screenCenter.x
+            let dy = point.y - screenCenter.y
+            let distance = dx * dx + dy * dy
+            if distance < bestDistance {
+                bestDistance = distance
+                bestScreen = screen
+            }
+        }
+        return bestScreen
+    }
+    
+    // MARK: - Window Helpers
     
     private func getWindowAndScreen() -> (AXUIElement, NSScreen)? {
         guard let app = NSWorkspace.shared.frontmostApplication else {
-            print("ERROR: No frontmost application")
             return nil
         }
-        
-        print("Frontmost app: \(app.localizedName ?? "Unknown")")
         
         let appElement = AXUIElementCreateApplication(app.processIdentifier)
         
@@ -311,29 +244,25 @@ class WindowManager {
         let result = AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &windowRef)
         
         guard result == .success, let windowValue = windowRef else {
-            print("ERROR: Could not get focused window. Error: \(result.rawValue)")
             return nil
         }
         
         let window = windowValue as! AXUIElement
         
-        guard let screen = NSScreen.main else {
-            print("ERROR: No main screen")
-            return nil
+        guard let position = getWindowPosition(window),
+              let size = getWindowSize(window) else {
+            let fallback = NSScreen.main ?? NSScreen.screens[0]
+            return (window, fallback)
         }
         
-        print("Screen: \(screen.frame), visible: \(screen.visibleFrame)")
-        
+        let screen = screenForWindow(position: position, size: size)
         return (window, screen)
     }
     
     private func getWindowSize(_ window: AXUIElement) -> CGSize? {
         var sizeRef: CFTypeRef?
         let result = AXUIElementCopyAttributeValue(window, kAXSizeAttribute as CFString, &sizeRef)
-        
-        guard result == .success, let sizeValue = sizeRef else {
-            return nil
-        }
+        guard result == .success, let sizeValue = sizeRef else { return nil }
         
         var size = CGSize.zero
         AXValueGetValue(sizeValue as! AXValue, .cgSize, &size)
@@ -343,10 +272,7 @@ class WindowManager {
     private func getWindowPosition(_ window: AXUIElement) -> CGPoint? {
         var positionRef: CFTypeRef?
         let result = AXUIElementCopyAttributeValue(window, kAXPositionAttribute as CFString, &positionRef)
-        
-        guard result == .success, let positionValue = positionRef else {
-            return nil
-        }
+        guard result == .success, let positionValue = positionRef else { return nil }
         
         var position = CGPoint.zero
         AXValueGetValue(positionValue as! AXValue, .cgPoint, &position)
@@ -356,24 +282,19 @@ class WindowManager {
     private func setWindowPosition(_ window: AXUIElement, x: CGFloat, y: CGFloat) {
         var position = CGPoint(x: x, y: y)
         if let positionValue = AXValueCreate(.cgPoint, &position) {
-            let posResult = AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue)
-            print("Position set result: \(posResult == .success ? "OK" : "FAILED (\(posResult.rawValue))")")
+            AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue)
         }
     }
     
     private func setWindowFrame(_ window: AXUIElement, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) {
-        // Set position
         var position = CGPoint(x: x, y: y)
         if let positionValue = AXValueCreate(.cgPoint, &position) {
-            let posResult = AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue)
-            print("Position set result: \(posResult == .success ? "OK" : "FAILED (\(posResult.rawValue))")")
+            AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue)
         }
         
-        // Set size
         var size = CGSize(width: width, height: height)
         if let sizeValue = AXValueCreate(.cgSize, &size) {
-            let sizeResult = AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
-            print("Size set result: \(sizeResult == .success ? "OK" : "FAILED (\(sizeResult.rawValue))")")
+            AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
         }
     }
 }

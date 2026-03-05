@@ -160,6 +160,10 @@ struct ShortcutsSettingsView: View {
                     ShortcutRow(action: "Left Third", shortcut: "⌘ ⌥ ⌃ 5")
                     ShortcutRow(action: "Center Third", shortcut: "⌘ ⌥ ⌃ 6")
                     ShortcutRow(action: "Right Third", shortcut: "⌘ ⌥ ⌃ 7")
+                    
+                    Divider()
+                    
+                    ShortcutRow(action: "Next Display", shortcut: "⌘ ⌥ ⌃ N")
                 }
             }
             

@@ -151,6 +151,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(rightThirdItem)
         
         menu.addItem(NSMenuItem.separator())
+        
+        let nextDisplayItem = NSMenuItem(title: "Next Display (⌘⌥⌃N)", action: #selector(moveToNextDisplay), keyEquivalent: "")
+        nextDisplayItem.target = self
+        menu.addItem(nextDisplayItem)
+        
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit Shift", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         
         statusItem.menu = menu
@@ -183,6 +189,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     case 13: WindowManager.shared.tileLeftThird()
                     case 14: WindowManager.shared.tileCenterThird()
                     case 15: WindowManager.shared.tileRightThird()
+                    case 16: WindowManager.shared.moveToNextDisplay()
                     default: break
                     }
                 }
@@ -301,6 +308,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let status15 = RegisterEventHotKey(UInt32(kVK_ANSI_7), modifiers, hotKeyID15, GetApplicationEventTarget(), 0, &hotKeyRef15)
         print("Register Right Third: \(status15 == noErr ? "OK" : "FAILED")")
         if let ref = hotKeyRef15 { hotKeyRefs.append(ref) }
+        
+        // Register: Cmd + Option + Control + N for Next Display
+        let hotKeyID16 = EventHotKeyID(signature: OSType(0x5348), id: 16)
+        var hotKeyRef16: EventHotKeyRef?
+        let status16 = RegisterEventHotKey(UInt32(kVK_ANSI_N), modifiers, hotKeyID16, GetApplicationEventTarget(), 0, &hotKeyRef16)
+        print("Register Next Display: \(status16 == noErr ? "OK" : "FAILED")")
+        if let ref = hotKeyRef16 { hotKeyRefs.append(ref) }
     }
     
     // MARK: - Menu Actions
@@ -319,4 +333,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func tileLeftThird() { WindowManager.shared.tileLeftThird() }
     @objc func tileCenterThird() { WindowManager.shared.tileCenterThird() }
     @objc func tileRightThird() { WindowManager.shared.tileRightThird() }
+    @objc func moveToNextDisplay() { WindowManager.shared.moveToNextDisplay() }
 }
